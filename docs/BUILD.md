@@ -31,9 +31,9 @@ The build runs in a CachyOS container. You do not need CachyOS on the build comp
    - It runs the fork's checks and its staging script. These verify the CB1 sources and patches.
    - It gets the linux-cachyos PKGBUILD and config at the commit in `pins.env`. Then it applies
      `packaging/linux-cachyos-cb1/PKGBUILD.patch`.
-   - It copies each patch in `sources.map` into `build/pkgs/<package>/`.
+   - It copies each patch and CB1 media file in `sources.map` into `build/pkgs/<package>/`.
 
-   Make sure that the output ends with `Copied 73 patches.` and `Done.`
+   Make sure that the output ends with `Copied 78 files.` and `Done.`
 
 3. Build the packages:
 

@@ -24,8 +24,8 @@ This repository contains only packaging, three kernel patches and scripts.
      (`CB1/tools/verify.py`, `scripts/cb1-stage.py`).
    - The script gets the linux-cachyos PKGBUILD at `LC_COMMIT` and applies
      `packaging/linux-cachyos-cb1/PKGBUILD.patch`.
-   - The script copies the 73 patches in `sources.map` to `build/pkgs/<package>/`.
-   - Expected last lines: `Copied 73 patches.` and `Done.`
+   - The script copies the 78 files in `sources.map` (73 patches, 5 CB1 media files) to `build/pkgs/<package>/`.
+   - Expected last lines: `Copied 78 files.` and `Done.`
 4. Run `scripts/build-all.sh` in the background (for example, in `tmux`).
    Set `JOBS` to the number of CPU threads if you must use fewer threads.
    - The logs are in `build/logs/<package>.log`.
@@ -37,12 +37,13 @@ This repository contains only packaging, three kernel patches and scripts.
 ## Verification
 
 Run `scripts/verify.sh`. Report each line of the output to the user.
-Expected result: 6 lines with `PASS` and the line `All checks passed.`
+Expected result: 7 lines with `PASS` and the line `All checks passed.`
 
 The script makes sure that:
 - there are 7 packages and `out/SHA256SUMS` is correct,
 - `amdgpu.ko` contains the DVBridge code and the kernel version is `7.2.8-1-cachyos-cb1`,
 - `kodi.bin` contains the DV connector property and loads its libraries from `/opt/cb1/lib`.
+- the package contains the CB1 dialog files in `/opt/cb1/share/kodi/media/cb1/`.
 
 If a check fails, do not tell the user that the build is good.
 

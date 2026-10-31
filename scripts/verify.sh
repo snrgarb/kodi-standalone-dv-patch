@@ -17,4 +17,6 @@ podman run --rm --userns=keep-id -v "$DIR:/repo:ro,Z" localhost/cb1-builder bash
   c=$(strings "$t/opt/cb1/lib/kodi/kodi.bin" | grep -c DVBRIDGE_DV_STANDARD_LAB || true)
   [ "$c" -gt 0 ] && check "kodi.bin has the DV connector property" ok || check "kodi.bin DV property" "0 strings"
   readelf -d "$t/opt/cb1/lib/kodi/kodi.bin" | grep -q "R.*PATH.*/opt/cb1/lib" && check "kodi.bin runpath /opt/cb1/lib" ok || check "kodi.bin runpath" missing
+  m=$(bsdtar -tf kodi-cb1-*.pkg.tar.zst | grep -c "^opt/cb1/share/kodi/media/cb1/.*\.xml$" || true)
+  [ "$m" = 3 ] && check "CB1 dialog files in media/cb1" ok || check "CB1 dialog files" "found $m of 3"
   [ $fail = 0 ] && echo "All checks passed." || { echo "Some checks failed."; exit 1; }'

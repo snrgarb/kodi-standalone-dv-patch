@@ -6,7 +6,7 @@ pkgname=kodi-cb1
 _commit=28ea2eac1eb7af8fdcbd2672d933ce87f594be79
 _cb1rev=c7317cab38  # CroqueMr/libreelec-x86-dv commit; CB1 tree staged by scripts/fetch-sources.sh
 pkgver=22.0.r0.28ea2ea
-pkgrel=2
+pkgrel=3
 pkgdesc='Kodi with CB1 native Dolby Vision (LibreELEC-DV), GBM/GLES, installed under /opt/cb1'
 arch=('x86_64')
 url='https://github.com/CroqueMr/libreelec-x86-dv'
@@ -36,6 +36,11 @@ source=("kodi-${_commit}.tar.gz::https://github.com/xbmc/xbmc/archive/${_commit}
         "kodi-cb1-launch"
         "50-kodi-cb1.rules"
         "kodi-cb1.desktop"
+        "cb1-white.png"
+        "cb1-panel.png"
+        "DialogPlayerProcessInfo.xml"
+        "IncludesDVProcessInfo.xml"
+        "DialogPlaybackModes.xml"
         "0-le-1002-disable-online-check.patch"
         "0-le-9501-devinputmappings.patch"
         "0-le-9901-disable-using-tv-menu-language-by-default.patch"
@@ -71,6 +76,11 @@ sha256sums=('34ef5ef2345763588c17f1d2065d63ada4f6016d249a47f8c98ee3c64efaedb4'
             'a661d179952df5a596a757726bead19e63ecebe76cd1d434ef307c934726b371'
             'f06e45540f3419f57ae59439d3541413e8fe69622b9877a349c9951fb069e6aa'
             '3fbd3d7c781a08588240e8c4d4cb22d76df97815f3871305504c051150168584'
+            '72ed1d13473ec391e897b602bcc7d9473e70d5ca8aa3c7c81f99ea87d7dbb4e5'
+            '36480b14914c7b2a0a5f6db253132142b041496a9e59a9392884b7f27aca61a3'
+            '95d8997b81e0e9cfd74beeca70c008071aada0a5cfeabc393d3cfddbbc9ef380'
+            '556c27b34db565cd3f86c5b62a7363a35d026b51c41c7dd95e5d503fc7abed15'
+            '0449506089446ca376621f611f4c9de711e5c6cd381573acb2187411ad78fdd5'
             'c58d088431604e3db51310b359c18e01ff215f87df6b3a4fe22238eb5db4f64a'
             'fceff2c3e214eb474fdbcdd6b12e3a6e86860862796118e7de24d4da580b0dc1'
             '2e4b9b19ed2683847a8dbbb0e01a250502d33fa7799b604ec748d74c45920584'
@@ -177,4 +187,9 @@ package() {
   install -Dm755 "$srcdir/kodi-cb1-launch" "$pkgdir/opt/cb1/bin/kodi-cb1-launch"
   install -Dm644 "$srcdir/50-kodi-cb1.rules" "$pkgdir/usr/share/polkit-1/rules.d/50-kodi-cb1.rules"
   install -Dm644 "$srcdir/kodi-cb1.desktop" "$pkgdir/usr/share/applications/kodi-cb1.desktop"
+  # CB1 dialogs (enhanced player info, playback modes): LibreELEC-DV ships these in its
+  # filesystem overlay, not in the Kodi tree. Kodi loads them from special://xbmc/media/.
+  install -Dm644 -t "$pkgdir/opt/cb1/share/kodi/media" "$srcdir/cb1-white.png" "$srcdir/cb1-panel.png"
+  install -Dm644 -t "$pkgdir/opt/cb1/share/kodi/media/cb1" "$srcdir/DialogPlayerProcessInfo.xml" \
+    "$srcdir/IncludesDVProcessInfo.xml" "$srcdir/DialogPlaybackModes.xml"
 }

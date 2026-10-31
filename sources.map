@@ -1,4 +1,4 @@
-# Map of each makepkg input to its origin. scripts/fetch-sources.sh reads this file.
+# Map of each makepkg input (patches and CB1 media files) to its origin. scripts/fetch-sources.sh reads this file.
 # Format: <package>/<file>  <origin>
 #   fork:<path>   file in CroqueMr/libreelec-x86-dv at FORK_COMMIT, after scripts/cb1-stage.py.
 #   local:<path>  file in this repository.
@@ -76,3 +76,8 @@ linux-cachyos-cb1/linux-9927-cachyos-dv-exclusive-vsif.patch                    
 linux-cachyos-cb1/linux-9930-amd-3d.patch                                                            local:patches/linux/linux-9930-amd-3d.patch
 linux-cachyos-cb1/linux-9940-hdr10plus.patch                                                         fork:projects/Generic/patches/linux/linux-9940-hdr10plus.patch
 linux-cachyos-cb1/linux-9941-hdr10plus-presentation-contract.patch                                   fork:projects/Generic/patches/linux/linux-9941-hdr10plus-presentation-contract.patch
+kodi-cb1/cb1-white.png                                                 fork:projects/Generic/filesystem/usr/share/kodi/media/cb1-white.png
+kodi-cb1/cb1-panel.png                                                 fork:projects/Generic/filesystem/usr/share/kodi/media/cb1-panel.png
+kodi-cb1/DialogPlayerProcessInfo.xml                                   fork:projects/Generic/filesystem/usr/share/kodi/media/cb1/DialogPlayerProcessInfo.xml
+kodi-cb1/IncludesDVProcessInfo.xml                                     fork:projects/Generic/filesystem/usr/share/kodi/media/cb1/IncludesDVProcessInfo.xml
+kodi-cb1/DialogPlaybackModes.xml                                       fork:projects/Generic/filesystem/usr/share/kodi/media/cb1/DialogPlaybackModes.xml

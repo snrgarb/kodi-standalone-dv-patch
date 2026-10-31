@@ -32,7 +32,7 @@ done
 patch -d "$K" -p1 --no-backup-if-mismatch < "$K/PKGBUILD.patch"
 rm "$K/PKGBUILD.patch"
 
-echo "== Patches (sources.map)"
+echo "== Patches and CB1 media (sources.map)"
 n=0
 while read -r dest origin; do
   case $dest in ''|'#'*) continue ;; esac
@@ -45,7 +45,7 @@ while read -r dest origin; do
   cp "$src" "$B/pkgs/$dest"
   n=$((n + 1))
 done < "$ROOT/sources.map"
-echo "Copied $n patches."
+echo "Copied $n files."
 
 echo "== CB1 tree for Kodi"
 rev=$(grep -oP '^_cb1rev=\K[0-9a-f]+' "$B/pkgs/kodi-cb1/PKGBUILD")

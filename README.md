@@ -59,7 +59,7 @@ installed as a fallback.
 | `patches/linux/linux-9927-cachyos-dv-exclusive-vsif.patch` | CachyOS 7.2 sends the HDMI 1.4 VSIF from a different slot. This patch disables that slot while DV is on, so the TV gets only the Dolby VSIF. |
 | `patches/linux/linux-9930-amd-3d.patch` | The fork's 3D patch with one change: it uses `hfvsif_infopacket`, as CachyOS 7.2 does. |
 
-`sources.map` lists the origin of each of the 73 patches. `pins.env` gives the tested commits.
+`sources.map` lists the origin of each of the 73 patches and 5 CB1 media files. `pins.env` gives the tested commits.
 
 ## Build with Claude Code
 
