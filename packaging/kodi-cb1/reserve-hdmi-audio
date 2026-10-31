@@ -1,0 +1,34 @@
+#!/bin/sh
+# Run Kodi while PipeWire keeps away from the HDMI sound cards (runs as the user).
+# Kodi's ALSA output needs the HDMI device for itself. PipeWire opens the HDMI device for some
+# seconds each time the VT changes, which is exactly when Kodi starts and lists its audio
+# devices. A busy device is not in Kodi's list. With a D-Bus device reservation
+# (org.freedesktop.ReserveDevice1.AudioN) PipeWire releases the card and stays away until
+# Kodi exits.
+export XDG_RUNTIME_DIR="${XDG_RUNTIME_DIR:-/run/user/$(id -u)}"
+pids=
+if command -v pw-reserve >/dev/null; then
+  for c in /proc/asound/card[0-9]*; do
+    grep -qs '^name: HDMI' "$c"/pcm*p/info || continue
+    pw-reserve -n "Audio${c##*card}" -a Kodi -p 10 -r >/dev/null 2>&1 &
+    pids="$pids $!"
+  done
+  # Wait max 3 s until no playback PCM on these cards is open.
+  i=0
+  while [ -n "$pids" ] && [ $i -lt 6 ]; do
+    busy=
+    for c in /proc/asound/card[0-9]*; do
+      grep -qs '^name: HDMI' "$c"/pcm*p/info || continue
+      for f in "$c"/pcm*p/sub*/status; do
+        [ -r "$f" ] && [ "$(head -n1 "$f")" != closed ] && busy=1
+      done
+    done
+    [ -z "$busy" ] && break
+    sleep 0.5
+    i=$((i + 1))
+  done
+fi
+"$@"
+rc=$?
+[ -n "$pids" ] && kill $pids 2>/dev/null
+exit $rc

@@ -1,0 +1,45 @@
+Subject: [PATCH] application: bound shutdown so Exit always ends Kodi
+
+A Python service add-on that does not check abortRequested (seen with
+plugin.service.emby-next-gen 12.4.24) blocks CScriptInvocationManager::
+Uninitialize() in std::thread::join() forever. A player that waits on a
+stalled network source (the same add-on's local proxy) blocks
+ClosePlayer() for a minute or more. On LibreELEC systemd kills Kodi after
+a timeout; as a desktop session Kodi stays on screen.
+When Stop() starts, allow the shutdown 30 seconds, then _Exit with the
+normal exit code.
+
+--- a/xbmc/application/Application.cpp
++++ b/xbmc/application/Application.cpp
+@@ -179,8 +179,10 @@
+ #include <chrono>
+ #include <cmath>
+ #include <cstdint>
++#include <cstdlib>
+ #include <memory>
+ #include <mutex>
++#include <thread>
+ 
+ #include <tinyxml.h>
+ 
+@@ -1829,6 +1831,20 @@
+ 
+   CLog::Log(LOGINFO, "Stopping the application...");
+ 
++  // Stop() and Cleanup() can block forever: a Python service add-on that ignores
++  // abortRequested blocks CScriptInvocationManager::Uninitialize() in thread::join(), and
++  // a player that waits on a stalled network source blocks ClosePlayer(). As a desktop
++  // session Kodi then stays on screen. Give the shutdown 30 seconds, then exit anyway.
++  std::thread(
++      [exitCode]
++      {
++        std::this_thread::sleep_for(std::chrono::seconds(30));
++        CLog::Log(LOGWARNING, "Shutdown did not finish in 30 seconds; exiting with code {}",
++                  exitCode);
++        std::_Exit(exitCode);
++      })
++      .detach();
++
+   bool success = true;
+ 
+   CLog::Log(LOGINFO, "Stopping player");

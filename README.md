@@ -22,19 +22,23 @@ Other upstream projects:
 ## Status
 
 Test system: AMD Radeon RX 9070 XT (DCN 4.01), Sony TV (direct HDMI), CachyOS with
-Plasma Bigscreen, kernel `7.2.8-1-cachyos-cb1`, `kodi-cb1` pkgrel 3. Date: 2026-10-31.
+Plasma Bigscreen, kernel `7.2.8-1-cachyos-cb1`, `kodi-cb1` pkgrel 8. Date: 2026-10-31.
 
 | Test | Result |
 | --- | --- |
 | Profile 8.1, DV Standard | Pass (LibreELEC and CachyOS) |
 | Profile 7 FEL, DV Master Reference, full FEL reconstruction | Pass (LibreELEC and CachyOS) |
+| Profile 7 FEL with the HDMI 2.1 FRL kernel option (`amdgpu.dcfeaturemask=0x402`) | Pass |
 | E-AC3 5.1 passthrough through ALSA, A/V sync | Pass |
 | DTS-HD MA passthrough through ALSA | Pass |
+| TrueHD Atmos passthrough through ALSA | Pass. The TV shows Dolby Atmos - TrueHD |
+| ALSA HDMI device in the Kodi device list at each start | Pass (pkgrel 7) |
 | CB1 Player information dialog | Pass (pkgrel 3) |
 | Kodi start from Plasma Bigscreen, return to Plasma | Pass |
-| Exit from the Kodi power menu | Fixed in pkgrel 2. Not yet confirmed on hardware |
+| Exit from the Kodi power menu | Pass (pkgrel 4 and later) |
+| Restart Kodi from the Kodi power menu | Added in pkgrel 6. Not yet confirmed on hardware |
+| `systemctl stop` stops Kodi | Pass (pkgrel 5 and later) |
 | Passthrough through PulseAudio (PipeWire) | Partial: AC3, E-AC3 and DTS core only, with 250-500 ms audio delay. Use ALSA |
-| TrueHD / Atmos passthrough | Not tested |
 | Profile 5, kernel 7.3, CEC | Not tested |
 
 This is experimental. CroqueMr does not list RX 9000 GPUs as supported. Use it at your own risk.
@@ -67,7 +71,7 @@ Plasma.
 | `cb1-libplacebo` | libplacebo `e2972fd` + 20 fork patches |
 | `cb1-libdisplay-info` | libdisplay-info 0.4.0 (CachyOS has 0.3.0) |
 | `cb1-lightgbm` | LightGBM 4.7.0 (for the CB1 HDR10 AI modes) |
-| `kodi-cb1` | Kodi `28ea2ea` + 17 patches + CB1 from the fork, GBM/GLES, and the Bigscreen hand-off |
+| `kodi-cb1` | Kodi `28ea2ea` + 17 patches + CB1 from the fork, 2 patches from this repo, GBM/GLES, and the Bigscreen hand-off |
 
 All packages except the kernel install in `/opt/cb1`. They do not replace the CachyOS Kodi,
 FFmpeg or libplacebo. The kernel is a separate package. The stock `linux-cachyos` stays
@@ -80,8 +84,10 @@ installed as a fallback.
 | `patches/linux/linux-9926-amd-dcn401-dv.patch` | Adds DCN 4.01 (RX 9000) to the AMD DV allowlist. Rejects a DV commit if the DCN 4.01 scaler or colour blocks can change pixels. |
 | `patches/linux/linux-9927-cachyos-dv-exclusive-vsif.patch` | CachyOS 7.2 sends the HDMI 1.4 VSIF from a different slot. This patch disables that slot while DV is on, so the TV gets only the Dolby VSIF. |
 | `patches/linux/linux-9930-amd-3d.patch` | The fork's 3D patch with one change: it uses `hfvsif_infopacket`, as CachyOS 7.2 does. |
+| `patches/kodi/kodi-desktop-0001-exit-watchdog.patch` | When Kodi starts to stop, it has 30 seconds. Then it exits. A Python add-on that does not stop (for example, Emby for Kodi Next Gen) can otherwise keep Kodi on the screen. |
+| `patches/kodi/kodi-desktop-0002-restart-kodi.patch` | Adds **Restart Kodi** to the Estuary power menu. `kodi-standalone` starts Kodi again on exit code 65. |
 
-`sources.map` lists the origin of each of the 73 patches and 5 CB1 media files. `pins.env` gives the tested commits.
+`sources.map` lists the origin of each of the 75 patches and 5 CB1 media files. `pins.env` gives the tested commits.
 
 ## Build with Claude Code
 

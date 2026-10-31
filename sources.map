@@ -81,3 +81,5 @@ kodi-cb1/cb1-panel.png                                                 fork:proj
 kodi-cb1/DialogPlayerProcessInfo.xml                                   fork:projects/Generic/filesystem/usr/share/kodi/media/cb1/DialogPlayerProcessInfo.xml
 kodi-cb1/IncludesDVProcessInfo.xml                                     fork:projects/Generic/filesystem/usr/share/kodi/media/cb1/IncludesDVProcessInfo.xml
 kodi-cb1/DialogPlaybackModes.xml                                       fork:projects/Generic/filesystem/usr/share/kodi/media/cb1/DialogPlaybackModes.xml
+kodi-cb1/kodi-desktop-0001-exit-watchdog.patch                         local:patches/kodi/kodi-desktop-0001-exit-watchdog.patch
+kodi-cb1/kodi-desktop-0002-restart-kodi.patch                          local:patches/kodi/kodi-desktop-0002-restart-kodi.patch

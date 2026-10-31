@@ -1,0 +1,21 @@
+#!/bin/sh
+# End the login session on the given tty (default tty7) when its service stops.
+# PAMName=login puts the session's processes (kodi.bin) in session-N.scope, not in the
+# service cgroup. So "systemctl stop" kills only the launcher and Kodi stays on screen.
+# Send SIGTERM, wait max 35 s (Kodi's own shutdown limit is 30 s), then SIGKILL.
+tty="${1:-tty7}"
+for s in $(loginctl list-sessions --no-legend | awk '{print $1}'); do
+  [ "$(loginctl show-session "$s" -p TTY --value 2>/dev/null)" = "$tty" ] || continue
+  loginctl kill-session "$s" --signal=TERM 2>/dev/null
+  i=0
+  while [ $i -lt 70 ] && systemctl is-active -q "session-$s.scope"; do
+    [ -z "$(systemctl show "session-$s.scope" -p ControlGroup --value)" ] && break
+    [ -z "$(cat "/sys/fs/cgroup$(systemctl show "session-$s.scope" -p ControlGroup --value)/cgroup.procs" 2>/dev/null)" ] && break
+    sleep 0.5
+    i=$((i + 1))
+  done
+  [ $i -ge 70 ] && echo "stop-session: session $s did not stop in 35 seconds; killing it" >&2
+  loginctl kill-session "$s" --signal=KILL 2>/dev/null
+  loginctl terminate-session "$s" 2>/dev/null
+done
+exit 0

@@ -33,7 +33,7 @@ The build runs in a CachyOS container. You do not need CachyOS on the build comp
      `packaging/linux-cachyos-cb1/PKGBUILD.patch`.
    - It copies each patch and CB1 media file in `sources.map` into `build/pkgs/<package>/`.
 
-   Make sure that the output ends with `Copied 78 files.` and `Done.`
+   Make sure that the output ends with `Copied 80 files.` and `Done.`
 
 3. Build the packages:
 

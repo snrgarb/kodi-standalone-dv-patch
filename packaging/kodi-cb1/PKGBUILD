@@ -6,7 +6,7 @@ pkgname=kodi-cb1
 _commit=28ea2eac1eb7af8fdcbd2672d933ce87f594be79
 _cb1rev=c7317cab38  # CroqueMr/libreelec-x86-dv commit; CB1 tree staged by scripts/fetch-sources.sh
 pkgver=22.0.r0.28ea2ea
-pkgrel=3
+pkgrel=8
 pkgdesc='Kodi with CB1 native Dolby Vision (LibreELEC-DV), GBM/GLES, installed under /opt/cb1'
 arch=('x86_64')
 url='https://github.com/CroqueMr/libreelec-x86-dv'
@@ -33,6 +33,9 @@ source=("kodi-${_commit}.tar.gz::https://github.com/xbmc/xbmc/archive/${_commit}
         'https://code.videolan.org/videolan/libudfread/-/archive/1.2.0/libudfread-1.2.0.tar.gz'
         "kodi-cb1@.service"
         "return-to-desktop"
+        "wait-for-display"
+        "stop-session"
+        "reserve-hdmi-audio"
         "kodi-cb1-launch"
         "50-kodi-cb1.rules"
         "kodi-cb1.desktop"
@@ -58,6 +61,8 @@ source=("kodi-${_commit}.tar.gz::https://github.com/xbmc/xbmc/archive/${_commit}
         "kodi-9999-zz-beta3.patch"
         "kodi-9999-zzz-hdr10plus.patch"
         "kodi-9999-zzzz-hdr-output-receipts.patch"
+        "kodi-desktop-0001-exit-watchdog.patch"
+        "kodi-desktop-0002-restart-kodi.patch"
        )
 noextract=("kodi-${_commit}.tar.gz" "libdvdcss-1.5.0.tar.xz" "libdvdnav-7.0.0.tar.xz" "libdvdread-7.0.1.tar.xz" "crossguid-ca1bf4b810e2d188d04cb6286f957008ee1b7681.tar.gz" "libfstrcmp-0.7.D001.tar.gz" "libudfread-1.2.0.tar.gz")
 sha256sums=('34ef5ef2345763588c17f1d2065d63ada4f6016d249a47f8c98ee3c64efaedb4'
@@ -71,11 +76,14 @@ sha256sums=('34ef5ef2345763588c17f1d2065d63ada4f6016d249a47f8c98ee3c64efaedb4'
             '6be27e0b3a4907f0cd3cfadec255ee1b925569e1bd06e67a4d2f4267299b69c4'
             'e4018e850f80700acee8da296e56e15b1eef711ab15157e542e7d7e1237c3476'
             'adcce1190925f9d35a477757c5e3f0e221315d14d3d45b4ae62540ea0925f877'
-            '9f25ba8031d42713dcfdf3efcd4507274b4ca252b5cdd945d67379e401ce2d35'
+            '3e2f7532129beaaa0cca5cc610cf06d3cf71d058e430a82fa1c43415a8778785'
             'd781086246118ddfe9036def3150c43aa4f6a3dbc646b2693c9846a1d86689dc'
+            '54a3dcf240b9bf675d270ee291b043a965f0dbbe2cc81c7fe9b0afcc1e0eb930'
+            '483b1f7a5a41ae4d932cac108b9eefb6b73f018584ebb67ec6bed59ccc978bf4'
+            '1697abae5a3a84b96d08f16ac09790142f01cfd830b5a76e6c77506a1798d314'
             'a661d179952df5a596a757726bead19e63ecebe76cd1d434ef307c934726b371'
             'f06e45540f3419f57ae59439d3541413e8fe69622b9877a349c9951fb069e6aa'
-            '3fbd3d7c781a08588240e8c4d4cb22d76df97815f3871305504c051150168584'
+            'a67d715290e9f900a81770de3e141faa63dd47317bd31f7f010f431583f77d48'
             '72ed1d13473ec391e897b602bcc7d9473e70d5ca8aa3c7c81f99ea87d7dbb4e5'
             '36480b14914c7b2a0a5f6db253132142b041496a9e59a9392884b7f27aca61a3'
             '95d8997b81e0e9cfd74beeca70c008071aada0a5cfeabc393d3cfddbbc9ef380'
@@ -97,7 +105,9 @@ sha256sums=('34ef5ef2345763588c17f1d2065d63ada4f6016d249a47f8c98ee3c64efaedb4'
             'ff80289fe94df1f25f7118ed4553eae2c676abe95471af8ea3540fe14666891e'
             '0b6aae623aa6c5c1909694b6410985fb40e079a136d390d60358f548476dac3e'
             '480cc3d84c1eb2415aa23538cfe8a34917e3c210b3464ee49788768330e78fd9'
-            'c84b9d18df4c1ecdae7915a8caf40d55c82434a416fbbbdbc49cfa54d4a3c94d')
+            'c84b9d18df4c1ecdae7915a8caf40d55c82434a416fbbbdbc49cfa54d4a3c94d'
+            '61b322dd97828fc64dff7e200bda5402a722740d59d65a9e9b8544fdd6eb46ff'
+            '8170aab3e93b3f2d466872d00407c1f17f9b6732998b3f6330a5248aded40f9e')
 
 # Not applied: LibreELEC's 1007-handle-SIGTERM. On LibreELEC systemd owns Kodi's lifetime, so the
 # patch makes Exit only record an exit code. On a desktop that leaves Kodi running after Exit.
@@ -184,6 +194,9 @@ package() {
   # Plasma Bigscreen hand-off: Kodi on tty7 with exclusive KMS, back to Plasma on exit.
   install -Dm644 "$srcdir/kodi-cb1@.service" "$pkgdir/usr/lib/systemd/system/kodi-cb1@.service"
   install -Dm755 "$srcdir/return-to-desktop" "$pkgdir/opt/cb1/lib/kodi-cb1/return-to-desktop"
+  install -Dm755 "$srcdir/wait-for-display" "$pkgdir/opt/cb1/lib/kodi-cb1/wait-for-display"
+  install -Dm755 "$srcdir/stop-session" "$pkgdir/opt/cb1/lib/kodi-cb1/stop-session"
+  install -Dm755 "$srcdir/reserve-hdmi-audio" "$pkgdir/opt/cb1/lib/kodi-cb1/reserve-hdmi-audio"
   install -Dm755 "$srcdir/kodi-cb1-launch" "$pkgdir/opt/cb1/bin/kodi-cb1-launch"
   install -Dm644 "$srcdir/50-kodi-cb1.rules" "$pkgdir/usr/share/polkit-1/rules.d/50-kodi-cb1.rules"
   install -Dm644 "$srcdir/kodi-cb1.desktop" "$pkgdir/usr/share/applications/kodi-cb1.desktop"

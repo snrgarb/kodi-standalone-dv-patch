@@ -1,0 +1,33 @@
+Subject: [PATCH] desktop: add "Restart Kodi" to the Estuary power menu
+
+RestartApp ends Kodi with exit code 65. On LibreELEC systemd starts Kodi
+again; kodi-standalone treats 65 as a clean exit, so Kodi only closes.
+Start Kodi again on 65 in kodi-standalone, and add the item after Exit.
+
+--- a/tools/Linux/kodi-standalone.sh.in
++++ b/tools/Linux/kodi-standalone.sh.in
+@@ -35,7 +35,10 @@
+   $APP
+   RET=$?
+   NOW=$(date +%s)
+-  if [ $RET -ge 64 ] && [ $RET -le 66 ] || [ $RET -eq 0 ]; then # clean exit
++  if [ $RET -eq 65 ]; then # RestartApp: start again
++    LASTSUCCESSFULSTART=$NOW
++    CRASHCOUNT=0
++  elif [ $RET -ge 64 ] && [ $RET -le 66 ] || [ $RET -eq 0 ]; then # clean exit
+     LOOP=0
+   else # crash
+     DIFF=$((NOW-LASTSUCCESSFULSTART))
+--- a/addons/skin.estuary/xml/DialogButtonMenu.xml
++++ b/addons/skin.estuary/xml/DialogButtonMenu.xml
+@@ -23,6 +23,10 @@
+ 						<visible>System.ShowExitButton</visible>
+ 					</item>
+ 					<item>
++						<label>$LOCALIZE[13313] Kodi</label>
++						<onclick>RestartApp</onclick>
++					</item>
++					<item>
+ 						<label>$LOCALIZE[13016]</label>
+ 						<onclick>Powerdown()</onclick>
+ 						<visible>System.CanPowerDown</visible>

@@ -1,0 +1,16 @@
+#!/bin/sh
+# Wait (max 10 s) until no compositor holds DRM master, so Kodi can take the display.
+# After a VT switch KWin drops master; on a fast relaunch it can still hold it, and Kodi then
+# starts with a black screen ("Failed to authorize drm magic"). systemd-logind's own fd is ignored.
+for f in /sys/kernel/debug/dri/*/clients; do
+  [ -r "$f" ] || { sleep 1; exit 0; }   # no debugfs: fall back to a short delay
+done
+i=0
+while [ $i -lt 20 ]; do
+  held=$(awk 'NR > 1 && $4 == "y" && $1 != "systemd-logind" {print $1}' /sys/kernel/debug/dri/*/clients | sort -u)
+  [ -z "$held" ] && exit 0
+  sleep 0.5
+  i=$((i + 1))
+done
+echo "wait-for-display: DRM master still held by: $held" >&2
+exit 0

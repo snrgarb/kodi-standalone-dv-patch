@@ -15,9 +15,16 @@ TTYReset=yes
 TTYVHangup=yes
 UtmpIdentifier=tty7
 ExecStartPre=+/usr/bin/chvt 7
-ExecStart=/opt/cb1/bin/kodi-standalone
+ExecStartPre=+/opt/cb1/lib/kodi-cb1/wait-for-display
+ExecStart=/opt/cb1/lib/kodi-cb1/reserve-hdmi-audio /opt/cb1/bin/kodi-standalone
+# Kodi runs in the login session scope, not in this unit: end the session, then go back to Plasma.
+ExecStopPost=+/opt/cb1/lib/kodi-cb1/stop-session tty7
 ExecStopPost=+/opt/cb1/lib/kodi-cb1/return-to-desktop %i
+TimeoutStopSec=60
 Restart=no
+# ALSA gives TrueHD/DTS-HD passthrough and no PulseAudio buffering delay. PulseAudio stays
+# available for other outputs (e.g. headphones). Select the ALSA HDMI device in Kodi's settings.
+Environment=KODI_AE_SINK=ALSA+PULSE
 
 [Install]
 WantedBy=multi-user.target
