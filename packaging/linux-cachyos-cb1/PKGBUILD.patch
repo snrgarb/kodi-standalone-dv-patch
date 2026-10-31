@@ -1,0 +1,77 @@
+--- a/PKGBUILD
++++ b/PKGBUILD
+@@ -174,6 +174,7 @@
+     _pkgsuffix=cachyos
+ fi
+ 
++_pkgsuffix=cachyos-cb1  # CB1: separate package so stock linux-cachyos stays as a fallback
+ pkgbase="linux-$_pkgsuffix"
+ _major=7.2
+ _minor=8
+@@ -183,7 +184,7 @@
+ _tagrel=1
+ pkgrel=1
+ _srcname=cachyos-${_major}.${_minor}-${_tagrel}
+-pkgdesc='Linux EEVDF + LTO + AutoFDO + Propeller Cachy Sauce Kernel by CachyOS with other patches and improvements.'
++pkgdesc='CB1 Dolby Vision (LibreELEC-DV kernel patches + DCN 4.01) on Linux EEVDF + LTO + AutoFDO + Propeller Cachy Sauce Kernel by CachyOS with other patches and improvements.'
+ _kernver="$pkgver-$pkgrel"
+ _kernuname="${pkgver}-${_pkgsuffix}"
+ arch=('x86_64')
+@@ -825,3 +826,57 @@
+         'SKIP'
+         '21343697f5f1647aadbdec8a4aa477b10622e5ae04fa07fcf6f9bab67dece7180872676bdc49a90de5d273c2c13127c5812a7ca67dbd9edce3e26e8c38d358d1'
+         'c992567bd7dd8553432be496ffa1c17e2f5ebe9c7edb51945cf977e1b742dd6517c210d8843bb82744ca705efd07f8027cd7dde41b50215ebd707a34aa81462e')
++
++# CB1: LibreELEC-DV (CroqueMr) kernel patches, DCN 4.01 admission, CachyOS VSIF/3D fixups
++source+=(
++    "0101-drm-edid-add-half-sbs-1080p-stereo-modes.patch"
++    "linux-9900-00-drivers__gpu__drm__i915__display__intel_atomic.c.patch"
++    "linux-9900-01-drivers__gpu__drm__i915__display__intel_display.c.patch"
++    "linux-9900-02-drivers__gpu__drm__i915__display__intel_display_params.c.patch"
++    "linux-9900-03-drivers__gpu__drm__i915__display__intel_display_params.h.patch"
++    "linux-9900-04-drivers__gpu__drm__i915__display__intel_display_types.h.patch"
++    "linux-9900-05-drivers__gpu__drm__i915__display__intel_dv_lab_policy.h.patch"
++    "linux-9900-06-drivers__gpu__drm__i915__display__intel_dvbridge_hdr_policy.h.patch"
++    "linux-9900-07-drivers__gpu__drm__i915__display__intel_hdmi.c.patch"
++    "linux-9900-08-drivers__video__hdmi.c.patch"
++    "linux-9900-09-include__linux__hdmi.h.patch"
++    "linux-9901-native-hdmi-level-shifter.patch"
++    "linux-9902-hdmi-compatibility.patch"
++    "linux-9903-diagnostics.patch"
++    "linux-9904-hdr10-conversion.patch"
++    "linux-9910-common-dv-policy.patch"
++    "linux-9920-amd-dcn-native-dv.patch"
++    "linux-9921-amd-dv-diagnostic-and-vrr-guards.patch"
++    "linux-9925-vegam-dv-transport.patch"
++    "linux-9926-amd-dcn401-dv.patch"
++    "linux-9927-cachyos-dv-exclusive-vsif.patch"
++    "linux-9930-amd-3d.patch"
++    "linux-9940-hdr10plus.patch"
++    "linux-9941-hdr10plus-presentation-contract.patch"
++)
++b2sums+=(
++    'b86f0af81ea34dbaca6fb140c393ad63f56546a164f8611a73efb144ad3ae55014d020c2d96c0b6c6730323475cccae6be981d97ec36454a78f5a2aae7ad38dd'
++    '60d3186ea02037d14c611480ab11758880e3c4994ef720c99f02b1c40e6e7f074079485ca9254757b15bb5302a55ffc869bac542ed38f7ca4396ae1b63565f53'
++    '1b0c6181448720735a9501a0501691d061b834d0902dac409c67e0b9bb21a45414cab48e4d97bca977f0b858c9320ed44156637a76a59bca3800b4d19fe9007d'
++    'c4ab086d5496cd5f549bc8a98d523068df5b6005404d3ea6fe27988893bc42b5968fa1c8c775db493dbc9e1b65da83005ebfab39b25a965c7e036fb0b30c6abc'
++    '898690f6fbfc6c78c0d0b1afe8a9a5603e7242a60904ec2c91712ec85958b4d77dc6849ac92d71db46fc5caca9bd83bc1576de94369353c270e18d3e9d4770ce'
++    '92322944c712c354d1265f47313e086994131d0b3622db6806a4140bf154c78db10a2fd9064b1aa8f0d29c483b75ad8d6c9869ac65884990bff8f624a9686b3c'
++    '0ed9fb1f0aecb505f64afe35d7721c6fd533e337aef2b958e30ee7fe9829f625c4a14b008fc7e15da381c812bb55ab9f42009948d043e416d4be3866af489ae8'
++    'efb7c25d9ae168f85053f6245d7a071b4a600e183aa33712a8dbd986e9f6898af5c2b4ea904fda1534c7c04665074b1a5de5bf583ead93821e7cb2e129d457cf'
++    '2172f847beb70d44025775543c97102cddc32cc68d9ba133cb2cb02ffd1e11f281d57063bb358109784928345dab4015c436e1eddf7e02ebd544027ddb9cb07f'
++    '2e2217e5cab7bdf310551fae69b53527705ec54cb997fe8bdfb42c724d48d719893c32232c550151c7f5954aab000facb121487bd3284f31c64ba4d7294926de'
++    'a85fbc8f88abadad21953339863d7608214ade9ac2e1f781422045ee25aba73286dc941ab167b9172ad31bad378415acba669bd767000404d1831db247dcf906'
++    '3f059b73377c22f775d8a6ac15e507cbb6689f669535ef8914495af393dd312c9dfe9b36d73c114879a2ae331811b050639fffdeca953a949bd77364c510aba2'
++    '118472e29ea9ce462a9b9dcd6ed8cfd364233d228029903505d16d47bb16fd372ebaa501a56710cc8fc2a7527f483d565362705f3a0ee2376d477fc9f6b799b6'
++    '62f3e797d8277eb4faf60e23ef50caf8cec771c411bee9fc41381746bc1c1cd21c40ca1b43132d9ad16c894c4108d3421ff46479a3aecc7c0067ac11a810c048'
++    'ba705469fc56e1502492ec53e590df6adb9864c6558b8532e425bef9c2ff5f81e600463ee4aeb4ad48db49cd324f85ab5aa61ac132a13940a7016e9bb4a7616f'
++    'ec3d98ff68f17c8678f25358e5af42a4ded713cfa159169eb35454022c1810d5386f2baae9db63e9fb2ce5078892033ca18b9dea8768c0d2486ae5999bcff834'
++    'b5cf2b12dc3f2d05af9655e589b6a680eba75e6fccff8d2078b24fc691a7bf4c368ef59688bfd333d26ca88dc39ff9c8f37b9cb2b30b253b2a53a83f7cfa1943'
++    '248209a9b30aad90d08e5a1e2bb167d93d16294190fb9e2e220668f35c7ce40566d911753b3d734c9382c67cfecaa68a7fa20683bcd830f94a295376f7a82c7b'
++    'da4f2fcade16a5ac487de612eed2b5d43ccdb197ecfe77449252a03486e2f98047b7b1a4911d8002309c36c156d155a6e4be4546d87e2aa1c88392d047f2835b'
++    '407cf3b8a32fcfc44412922f4414dde415135104c5c0c44f2e3f90407d422cac4275782372f0c34ab396a96feaab49eb66c30ec97662a552c0b5e38c151672d0'
++    '94093bd4a0d6a13d789e3d664b7e66305f2ed9dbad31df32d2c196a1fb29765ff2cebc0dd6650760875233f35bd1d3fca6a98f561836e8bc03961b4b168cc071'
++    '9c6432f157485fee45a11727c9fadd0d3046212beb85dde77beb0dbe87897f256454068f5b22cd2f6aa28637bb82a431bf8ba329651b5302578a502d9b70cc86'
++    '08fedeb4230de50e9bc3d242bf0c4d81ee92c7d644172fe00094d28f630af285ea2fb693a2cd7eb5f76b7b3d01bd4b99040c3ec6d27270d16492e2d88af79b3b'
++    '6a2c1673a3f98be002345ea911fef1ed855d96732172c234b9e962c20eb917a6220cb82dd3c8b339504e292fe7415e14908af96eded464d532f635ae3996f054'
++)

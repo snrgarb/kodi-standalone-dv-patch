@@ -1,0 +1,25 @@
+# CB1 stack for CachyOS: libdisplay-info 0.4.0 (as LibreELEC-DV); the fork's Kodi needs
+# cta-vic.h, which CachyOS's 0.3.0 lacks. Under /opt/cb1 so KWin keeps the system copy.
+pkgname=cb1-libdisplay-info
+pkgver=0.4.0
+pkgrel=1
+pkgdesc='EDID and DisplayID library for CB1 Kodi, installed under /opt/cb1'
+arch=('x86_64')
+url='https://gitlab.freedesktop.org/emersion/libdisplay-info'
+license=('MIT')
+depends=('glibc')
+makedepends=('meson' 'ninja' 'hwdata' 'python')
+source=("https://gitlab.freedesktop.org/emersion/libdisplay-info/-/releases/${pkgver}/downloads/libdisplay-info-${pkgver}.tar.xz")
+sha256sums=('43b180baa143e2035654759d84e2b2f5ee77d5fe817c423838c7fe59c0d68459')
+
+build() {
+  arch-meson "libdisplay-info-${pkgver}" build --prefix=/opt/cb1 --libdir=lib \
+    -Dc_link_args=-Wl,-rpath,/opt/cb1/lib
+  meson compile -C build
+}
+
+package() {
+  meson install -C build --destdir "$pkgdir"
+  rm -rf "$pkgdir/opt/cb1/bin"
+  install -Dm644 "libdisplay-info-${pkgver}/LICENSE" -t "$pkgdir/usr/share/licenses/$pkgname/"
+}

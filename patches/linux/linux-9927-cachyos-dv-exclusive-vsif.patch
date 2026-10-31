@@ -1,0 +1,21 @@
+Subject: [PATCH] drm/amd/display: keep the DV VSIF exclusive on CachyOS
+
+CachyOS 7.2 moves the HDMI 1.4 VSIF from vsp_infopacket to hfvsif_infopacket.
+On upstream 7.2 the DV VSIF overwrote it; invalidate the separate slot while
+DV Standard is active so the sink receives only the Dolby VSIF, as tested.
+
+diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_dv.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_dv.c
+index 11a3a27..fb01a36 100644
+--- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_dv.c
++++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_dv.c
+@@ -263,6 +263,10 @@ int amdgpu_dm_dv_configure_stream(struct dc_stream_state *stream,
+ 	/* Publish the candidate only after every packet has been prepared. */
+ 	stream->avi_infopacket = avi_packet;
+ 	stream->vsp_infopacket = vsp_packet;
++	/* CachyOS sends the HDMI 1.4 VSIF from its own slot; upstream 7.2 shared
++	 * vsp_infopacket, so the DV VSIF replaced it. Keep the DV VSIF the only one.
++	 */
++	stream->hfvsif_infopacket.valid = false;
+ 	stream->dv_standard = true;
+ 	stream->timing.hdmi_vic = caps.legacy_vsif ? legacy.vic : 0;
+ 	stream->timing.vic = avi.video_code;

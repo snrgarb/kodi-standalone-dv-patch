@@ -1,0 +1,148 @@
+# CB1 stack for CachyOS: FFmpeg 9.0 patched as in LibreELEC-DV (CroqueMr/libreelec-x86-dv):
+# packages/multimedia/ffmpeg/patches/{postproc,libreelec} + projects/Generic/patches/ffmpeg.
+# Configure flags are LibreELEC's recorded Generic x86_64 configuration (+ --enable-vaapi).
+# Installed under /opt/cb1 with an rpath; never added to ld.so.conf, so the system FFmpeg is untouched.
+pkgname=cb1-ffmpeg
+pkgver=9.0
+pkgrel=1
+pkgdesc='FFmpeg with the CB1/LibreELEC-DV Dolby Vision patches, installed under /opt/cb1'
+arch=('x86_64')
+url='https://ffmpeg.org'
+license=('GPL-3.0-or-later')
+depends=('glibc' 'bzip2' 'dav1d' 'libdrm' 'libva' 'libxml2' 'openssl' 'speex' 'zlib')
+options=('!lto')  # FFmpeg's x86 asm breaks under LTO, as in Arch's ffmpeg
+makedepends=('nasm')
+source=("https://ffmpeg.org/releases/ffmpeg-${pkgver}.tar.xz"
+        "00-postproc-0001-postproc.patch"
+        "01-libreelec-0001-libreelec.patch"
+        "10-ffmpeg-9900-00-libavcodec__dovi_rpudec.c.patch"
+        "10-ffmpeg-9900-01-libavformat__isom_tags.c.patch"
+        "10-ffmpeg-9900-02-libavutil__dovi_meta.h.patch"
+        "10-ffmpeg-9900-03-source-dovi-raw.patch"
+        "10-ffmpeg-9900-04-ts-dovi-layer.patch"
+        "10-ffmpeg-9900-05-matroska-dovi-association.patch"
+        "10-ffmpeg-9900-06-hdr10plus-country.patch"
+        "10-ffmpeg-9900-06-hevc-picture-clock.patch"
+        "10-ffmpeg-9900-07-mov-dovi-hevc-entry.patch"
+        "10-ffmpeg-9910-mvc.patch"
+       )
+sha256sums=('7f607a00dd0d28a729d5a4811205812eef01cf6ef6155025febb6f36a9062d52'
+            'e8849f0ac7977bf12df8b8f67ae8e4819e302eb8a5979909514909a9ad6ef261'
+            'cbef8e02dfd8d8f7e4c6141aeaad91a5389578da97ea82dca6d85313824a047f'
+            'b83a9f89befad875d90bd483dd5fdea4e293af037ac2f8c16ebf1bd26d30e2c4'
+            'c86fe701ec00bb74fee4b7d8e87133d2d7cb43ce3d217f3ec128f8bcc9487fbb'
+            '953cfb01339263c02c7932eb67e30ea6603613a1800fa4041f46b5f3ffb10fe0'
+            'f2f7d6ac70566b2035966cfe83db8c02b3d6b874b81d31d41a7be126cb52c55a'
+            '4ce28e60a949a51554d3c0d8d2596b2ca791463baf352d7f250c6e710d0f0ac2'
+            '5c463382da9b54a4786bb3f4ad087ec7cc1e6a3f948240433ebf87c243e9cb52'
+            '28ae21bd76915b873bdc3235b7ae78b651bf6d0ad4760c213be19763f9eec058'
+            '2e89e948d1d4631e6a8161c77af3ea0791348c8ac2eb172ec197afe0a2404bb8'
+            '861c26bebb3f9ff2ea045180cbdc9de7997459bd634c92f56c98124757ff3780'
+            '58886cc463a811a226024da50e5014dd561f79230d6fa9dd9b94b6e84acce5e6'
+           )
+
+prepare() {
+  cd "ffmpeg-${pkgver}"
+  local p
+  for p in "${source[@]}"; do
+    [[ $p == *.patch ]] || continue
+    echo "Applying ${p}"
+    patch -Np1 -i "../${p}"
+  done
+  echo "${pkgver}" > RELEASE
+}
+
+build() {
+  cd "ffmpeg-${pkgver}"
+  ./configure --prefix=/opt/cb1 --libdir=/opt/cb1/lib --shlibdir=/opt/cb1/lib \
+    --extra-cflags="${CFLAGS}" --extra-ldflags="${LDFLAGS} -Wl,-rpath,/opt/cb1/lib" \
+    --enable-vaapi \
+    --disable-static \
+    --enable-shared \
+    --enable-gpl \
+    --enable-version3 \
+    --enable-logging \
+    --disable-doc \
+    --disable-debug \
+    --enable-stripping \
+    --enable-pic \
+    --enable-optimizations \
+    --disable-extra-warnings \
+    --enable-avdevice \
+    --enable-avcodec \
+    --enable-avformat \
+    --enable-swscale \
+    --enable-avfilter \
+    --disable-devices \
+    --enable-pthreads \
+    --enable-network \
+    --disable-gnutls \
+    --enable-openssl \
+    --disable-gray \
+    --enable-swscale-alpha \
+    --disable-small \
+    --disable-v4l2_m2m \
+    --enable-libdrm \
+    --disable-vdpau \
+    --enable-runtime-cpudetect \
+    --disable-hardcoded-tables \
+    --disable-encoders \
+    --enable-encoder=ac3 \
+    --enable-encoder=eac3 \
+    --enable-encoder=aac \
+    --enable-encoder=wmav2 \
+    --enable-encoder=mjpeg \
+    --enable-encoder=png \
+    --enable-hwaccels \
+    --disable-muxers \
+    --enable-muxer=spdif \
+    --enable-muxer=adts \
+    --enable-muxer=asf \
+    --enable-muxer=ipod \
+    --enable-muxer=mpegts \
+    --enable-demuxers \
+    --enable-parsers \
+    --enable-bsfs \
+    --enable-protocol=http \
+    --disable-indevs \
+    --disable-outdevs \
+    --enable-filters \
+    --disable-avisynth \
+    --enable-bzlib \
+    --disable-lzma \
+    --disable-alsa \
+    --disable-frei0r \
+    --disable-libopencore-amrnb \
+    --disable-libopencore-amrwb \
+    --disable-libopencv \
+    --disable-libdc1394 \
+    --disable-libfreetype \
+    --disable-libgsm \
+    --disable-libmp3lame \
+    --disable-libopenjpeg \
+    --disable-librtmp \
+    --enable-libdav1d \
+    --enable-libspeex \
+    --disable-libtheora \
+    --disable-libvo-amrwbenc \
+    --disable-libvorbis \
+    --disable-libvpx \
+    --disable-libx264 \
+    --disable-libxavs \
+    --enable-libxml2 \
+    --disable-libxvid \
+    --enable-zlib \
+    --enable-asm \
+    --disable-altivec \
+    --disable-neon \
+    --disable-symver \
+    --disable-programs
+
+  make
+}
+
+package() {
+  cd "ffmpeg-${pkgver}"
+  make DESTDIR="$pkgdir" install
+  rm -rf "$pkgdir/opt/cb1/share/ffmpeg/examples"
+}

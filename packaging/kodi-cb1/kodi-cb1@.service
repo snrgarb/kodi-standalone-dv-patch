@@ -1,0 +1,23 @@
+# Kodi CB1 on its own VT with exclusive KMS (needed for the Dolby Vision HDMI properties).
+# Started from Plasma Bigscreen via kodi-cb1-launch; Plasma keeps running on its own VT.
+[Unit]
+Description=Kodi CB1 (GBM, native Dolby Vision) for %i
+After=systemd-user-sessions.service
+Conflicts=getty@tty7.service
+
+[Service]
+User=%i
+PAMName=login
+TTYPath=/dev/tty7
+StandardInput=tty
+StandardOutput=journal
+TTYReset=yes
+TTYVHangup=yes
+UtmpIdentifier=tty7
+ExecStartPre=+/usr/bin/chvt 7
+ExecStart=/opt/cb1/bin/kodi-standalone
+ExecStopPost=+/opt/cb1/lib/kodi-cb1/return-to-desktop %i
+Restart=no
+
+[Install]
+WantedBy=multi-user.target

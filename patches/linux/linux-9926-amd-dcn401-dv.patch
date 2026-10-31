@@ -1,0 +1,52 @@
+Subject: [PATCH] drm/amd/display: admit DCN 4.01 (RX 9000) to the DV transport
+
+Base: Linux 7.2.6 with the Beta5 native DV and Vega M patches applied.
+Add DCN_VERSION_4_01 to the explicit display-engine allowlist; DCN 4.2 stays out.
+DCN401 shares the DCN3.2 colour path but adds an SPL scaler (EASF/iSHARP) and a
+movable CM block. At 1:1 with sharpening off SPL selects SCALING_444_BYPASS, and
+MCM shaper/3D LUT/1D LUT bypass when unset. Reject a DV commit if any of those
+could turn into a pixel-modifying stage. Physical HDMI qualification pending.
+
+diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_dv.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_dv.c
+index 4e7adcf25..2022a604b 100644
+--- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_dv.c
++++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_dv.c
+@@ -34,6 +34,7 @@ static bool dv_display_supported(enum dce_version version)
+ 	case DCN_VERSION_3_15: case DCN_VERSION_3_16:
+ 	case DCN_VERSION_3_2: case DCN_VERSION_3_21:
+ 	case DCN_VERSION_3_5: case DCN_VERSION_3_51: case DCN_VERSION_3_6:
++	case DCN_VERSION_4_01: /* RDNA4 (RX 9000); DCN 4.2 stays excluded. */
+ 		return true;
+ 	default:
+ 		return false;
+@@ -336,6 +337,20 @@ static bool dv_identity_tf(enum amdgpu_transfer_function tf)
+ 	return tf == AMDGPU_TRANSFER_FUNCTION_DEFAULT || tf == AMDGPU_TRANSFER_FUNCTION_IDENTITY;
+ }
+ 
++/* DCN4 adds an SPL scaler with EASF/iSHARP and a movable CM block. At 1:1
++ * with sharpening off SPL selects scaler bypass; reject anything that would
++ * turn either block into a pixel-modifying stage.
++ */
++static bool dv_dcn4_neutral(const struct dc_plane_state *dc)
++{
++	const struct dc *core = dc->ctx ? dc->ctx->dc : NULL;
++
++	return !dc->adaptive_sharpness_en && !dc->mcm_lut1d_enable &&
++		dc->mcm_luts.lut3d_data.lut3d_src == DC_CM2_TRANSFER_FUNC_SOURCE_SYSMEM &&
++		core && !core->debug.always_scale &&
++		core->debug.force_sharpness == SHARPNESS_HW_OFF;
++}
++
+ static bool dv_plane_neutral(const struct drm_plane_state *p,
+ 			     const struct drm_display_mode *mode)
+ {
+@@ -367,7 +382,8 @@ static bool dv_plane_neutral(const struct drm_plane_state *p,
+ 		dc->blend_tf.type == TF_TYPE_BYPASS && !dc->lut3d_func.state.bits.initialized &&
+ 		dc->hdr_mult.value == dc_fixpt_one.value &&
+ 		!dc->gamut_remap_matrix.enable_remap &&
+-		!dc->input_csc_color_matrix.enable_adjustment;
++		!dc->input_csc_color_matrix.enable_adjustment &&
++		dv_dcn4_neutral(dc);
+ }
+ 
+ int amdgpu_dm_dv_atomic_check(struct drm_atomic_commit *state)

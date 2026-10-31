@@ -1,0 +1,28 @@
+# CB1 stack for CachyOS: LightGBM C API used by CB1's HDR10 AI (L1/L3) model.
+# Mirrors LibreELEC-DV packages/multimedia/lightgbm (CroqueMr/libreelec-x86-dv).
+pkgname=cb1-lightgbm
+pkgver=4.7.0
+pkgrel=1
+pkgdesc='LightGBM C library for CB1, installed under /opt/cb1'
+arch=('x86_64')
+url='https://github.com/microsoft/LightGBM'
+license=('MIT')
+depends=('gcc-libs' 'glibc')
+makedepends=('cmake' 'ninja')
+source=("https://files.pythonhosted.org/packages/63/8e/4db5e29290d7e619c307fdb8dab0a0514090af2ce3ec483050e024ec6126/lightgbm-${pkgver}.tar.gz")
+sha256sums=('f8e20f682c9aabd000bcf4a7ed8aa6f473c1adfecccae34ec24e823d156f4af0')
+
+build() {
+  cmake -S "lightgbm-${pkgver}" -B build -G Ninja \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_INSTALL_PREFIX=/opt/cb1 \
+    -DCMAKE_INSTALL_LIBDIR=lib \
+    -DBUILD_CLI=OFF -DUSE_OPENMP=OFF -DUSE_GPU=OFF -DUSE_CUDA=OFF -DUSE_MPI=OFF \
+    -DINSTALL_HEADERS=ON
+  cmake --build build
+}
+
+package() {
+  DESTDIR="$pkgdir" cmake --install build
+  install -Dm644 "lightgbm-${pkgver}/LICENSE" -t "$pkgdir/usr/share/licenses/$pkgname/"
+}

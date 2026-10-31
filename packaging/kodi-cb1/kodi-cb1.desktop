@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=Kodi (Dolby Vision)
+Comment=Kodi with CB1 native Dolby Vision; takes over the TV until you exit Kodi
+Exec=/opt/cb1/bin/kodi-cb1-launch
+Icon=kodi
+Categories=AudioVideo;Video;Player;TV;

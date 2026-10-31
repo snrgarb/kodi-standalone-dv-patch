@@ -1,0 +1,3 @@
+#!/bin/sh
+# Called from the Plasma Bigscreen tile: hand the display to Kodi CB1.
+exec systemctl start "kodi-cb1@$(id -un).service"
