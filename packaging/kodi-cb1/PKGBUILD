@@ -6,7 +6,7 @@ pkgname=kodi-cb1
 _commit=28ea2eac1eb7af8fdcbd2672d933ce87f594be79
 _cb1rev=c7317cab38  # CroqueMr/libreelec-x86-dv commit; CB1 tree staged by scripts/fetch-sources.sh
 pkgver=22.0.r0.28ea2ea
-pkgrel=1
+pkgrel=2
 pkgdesc='Kodi with CB1 native Dolby Vision (LibreELEC-DV), GBM/GLES, installed under /opt/cb1'
 arch=('x86_64')
 url='https://github.com/CroqueMr/libreelec-x86-dv'
@@ -37,7 +37,6 @@ source=("kodi-${_commit}.tar.gz::https://github.com/xbmc/xbmc/archive/${_commit}
         "50-kodi-cb1.rules"
         "kodi-cb1.desktop"
         "0-le-1002-disable-online-check.patch"
-        "0-le-1007-handle-SIGTERM.patch"
         "0-le-9501-devinputmappings.patch"
         "0-le-9901-disable-using-tv-menu-language-by-default.patch"
         "0-le-9902-headers-only.patch"
@@ -73,7 +72,6 @@ sha256sums=('34ef5ef2345763588c17f1d2065d63ada4f6016d249a47f8c98ee3c64efaedb4'
             'f06e45540f3419f57ae59439d3541413e8fe69622b9877a349c9951fb069e6aa'
             '3fbd3d7c781a08588240e8c4d4cb22d76df97815f3871305504c051150168584'
             'c58d088431604e3db51310b359c18e01ff215f87df6b3a4fe22238eb5db4f64a'
-            '90a4d3f638ca095cc02b0fcf4c6c93e7844e40344750dccc6d70e00bfb818361'
             'fceff2c3e214eb474fdbcdd6b12e3a6e86860862796118e7de24d4da580b0dc1'
             '2e4b9b19ed2683847a8dbbb0e01a250502d33fa7799b604ec748d74c45920584'
             'a40f2ba9e93df333f88a95d93e476b3d76f5b03ccac5fc6b3032a7b4de7d4d28'
@@ -90,6 +88,9 @@ sha256sums=('34ef5ef2345763588c17f1d2065d63ada4f6016d249a47f8c98ee3c64efaedb4'
             '0b6aae623aa6c5c1909694b6410985fb40e079a136d390d60358f548476dac3e'
             '480cc3d84c1eb2415aa23538cfe8a34917e3c210b3464ee49788768330e78fd9'
             'c84b9d18df4c1ecdae7915a8caf40d55c82434a416fbbbdbc49cfa54d4a3c94d')
+
+# Not applied: LibreELEC's 1007-handle-SIGTERM. On LibreELEC systemd owns Kodi's lifetime, so the
+# patch makes Exit only record an exit code. On a desktop that leaves Kodi running after Exit.
 
 prepare() {
   rm -rf xbmc-${_commit}

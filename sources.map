@@ -36,7 +36,6 @@ cb1-libplacebo/libplacebo-9915-hdr10-linear-conversion.patch                    
 cb1-libplacebo/libplacebo-9916-fel-filter.patch                                                      fork:packages/addons/addon-depends/multimedia-tools-depends/libplacebo/patches/libplacebo-9916-fel-filter.patch
 cb1-libplacebo/libplacebo-9917-native-bounds.patch                                                   fork:packages/addons/addon-depends/multimedia-tools-depends/libplacebo/patches/libplacebo-9917-native-bounds.patch
 kodi-cb1/0-le-1002-disable-online-check.patch                                                        fork:packages/mediacenter/kodi/patches/1002-disable-online-check.patch
-kodi-cb1/0-le-1007-handle-SIGTERM.patch                                                              fork:packages/mediacenter/kodi/patches/1007-handle-SIGTERM.patch
 kodi-cb1/0-le-9501-devinputmappings.patch                                                            fork:packages/mediacenter/kodi/patches/9501-devinputmappings.patch
 kodi-cb1/0-le-9901-disable-using-tv-menu-language-by-default.patch                                   fork:packages/mediacenter/kodi/patches/9901-disable-using-tv-menu-language-by-default.patch
 kodi-cb1/0-le-9902-headers-only.patch                                                                fork:packages/mediacenter/kodi/patches/9902-headers-only.patch

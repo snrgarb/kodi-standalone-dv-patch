@@ -33,7 +33,7 @@ The build runs in a CachyOS container. You do not need CachyOS on the build comp
      `packaging/linux-cachyos-cb1/PKGBUILD.patch`.
    - It copies each patch in `sources.map` into `build/pkgs/<package>/`.
 
-   Make sure that the output ends with `Copied 74 patches.` and `Done.`
+   Make sure that the output ends with `Copied 73 patches.` and `Done.`
 
 3. Build the packages:
 

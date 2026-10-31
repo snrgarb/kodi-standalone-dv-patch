@@ -24,8 +24,8 @@ This repository contains only packaging, three kernel patches and scripts.
      (`CB1/tools/verify.py`, `scripts/cb1-stage.py`).
    - The script gets the linux-cachyos PKGBUILD at `LC_COMMIT` and applies
      `packaging/linux-cachyos-cb1/PKGBUILD.patch`.
-   - The script copies the 74 patches in `sources.map` to `build/pkgs/<package>/`.
-   - Expected last lines: `Copied 74 patches.` and `Done.`
+   - The script copies the 73 patches in `sources.map` to `build/pkgs/<package>/`.
+   - Expected last lines: `Copied 73 patches.` and `Done.`
 4. Run `scripts/build-all.sh` in the background (for example, in `tmux`).
    Set `JOBS` to the number of CPU threads if you must use fewer threads.
    - The logs are in `build/logs/<package>.log`.
