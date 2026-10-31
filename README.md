@@ -21,14 +21,36 @@ Other upstream projects:
 
 ## Status
 
-| Item | Result |
+Test system: AMD Radeon RX 9070 XT (DCN 4.01), Sony TV (direct HDMI), CachyOS with
+Plasma Bigscreen, kernel `7.2.8-1-cachyos-cb1`, `kodi-cb1` pkgrel 3. Date: 2026-10-31.
+
+| Test | Result |
 | --- | --- |
-| RX 9070 XT, Profile 8.1, DV Standard | Works (LibreELEC and CachyOS) |
-| RX 9070 XT, Profile 7 FEL, DV Master Reference | Works (LibreELEC) |
-| Kodi start from Plasma Bigscreen, return to Plasma | Works (CachyOS) |
-| Profile 5, kernel 7.3, PipeWire audio passthrough, CEC | Not tested |
+| Profile 8.1, DV Standard | Pass (LibreELEC and CachyOS) |
+| Profile 7 FEL, DV Master Reference, full FEL reconstruction | Pass (LibreELEC and CachyOS) |
+| E-AC3 5.1 passthrough through ALSA, A/V sync | Pass |
+| DTS-HD MA passthrough through ALSA | Pass |
+| CB1 Player information dialog | Pass (pkgrel 3) |
+| Kodi start from Plasma Bigscreen, return to Plasma | Pass |
+| Exit from the Kodi power menu | Fixed in pkgrel 2. Not yet confirmed on hardware |
+| Passthrough through PulseAudio (PipeWire) | Partial: AC3, E-AC3 and DTS core only, with 250-500 ms audio delay. Use ALSA |
+| TrueHD / Atmos passthrough | Not tested |
+| Profile 5, kernel 7.3, CEC | Not tested |
 
 This is experimental. CroqueMr does not list RX 9000 GPUs as supported. Use it at your own risk.
+
+### Proof
+
+Nacho Libre (2006), Dolby Vision Profile 7 FEL with DTS-HD MA, on the RX 9070 XT.
+Kodi's CB1 Player information dialog shows:
+
+- Dolby Vision Profile 7, **Full FEL** reconstructed, **Dolby Vision Master Reference**
+- Decoder `ff-hevc-vaapi`, 3840x2160 at 23.976 Hz, RGB 4:4:4 8-bit tunnel
+- Audio `dtshd_ma`, **Passthrough** (`pt-dtshd`)
+
+![CB1 Player information: Profile 7 FEL, Master Reference, DTS-HD MA passthrough](docs/images/player-info-p7-fel-dtshd.jpg)
+
+The screenshot is Kodi's own capture of the frame buffer. The TV showed the Dolby Vision badge.
 
 ## Breakdown
 
